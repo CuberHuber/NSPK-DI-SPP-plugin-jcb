@@ -34,7 +34,7 @@ class JCB:
     REF_NAME = 'jcb'
     HOST = 'https://www.global.jcb/en/press/index.html'
 
-    YEAR_BEGIN = 2023
+    YEAR_BEGIN = 2016
     HOME_URL = 'https://www.global.jcb/en/press/index.html'
     TEMPLATE_URL = 'https://www.global.jcb/en/press/index.html?year={year}'
     _content_document: list[SPP_document]
