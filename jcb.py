@@ -34,7 +34,7 @@ class JCB:
     REF_NAME = 'jcb'
     HOST = 'https://www.global.jcb/en/press/index.html'
 
-    YEAR_BEGIN = 2016
+    YEAR_BEGIN = 2023
     HOME_URL = 'https://www.global.jcb/en/press/index.html'
     TEMPLATE_URL = 'https://www.global.jcb/en/press/index.html?year={year}'
     _content_document: list[SPP_document]
@@ -153,11 +153,11 @@ class JCB:
         time.sleep(1)
         self._agree_cookie_pass()
 
-        _document: SPP_document = SPP_document(None, None, None, None, None, None, {}, None, None)
+        _document: SPP_document = SPP_document(None, None, None, None, url, None, {}, None, None)
 
         try:  # Парсинг даты публикации. Обязательная информация
             # _pub_date_text: str = self.driver.find_element(By.XPATH,'//*[@id="press"]/div[1]/div/div/div[2]/div/div/p/span[contains(class, "news-list--date")]').get_attribute('innerText')
-            _pub_date_text: str = WebDriverWait(self.driver, 10).until(ec.presence_of_element_located((By.CLASS_NAME, 'news-list--date'))).get_attribute("innerText")
+            _pub_date_text: str = WebDriverWait(self.driver, 3).until(ec.presence_of_element_located((By.CLASS_NAME, 'news-list--date'))).get_attribute("innerText")
             _pub_date: datetime.datetime = dateutil.parser.parse(_pub_date_text)
             _document.pub_date = _pub_date
         except Exception as e:
@@ -168,7 +168,7 @@ class JCB:
             # _category_text: str = self.driver.find_element(By.XPATH,
             #                                                '//*[@id="press"]/div[1]/div/div/div[2]/div/div/p/span[contains(class, "news-list--category")]').get_attribute(
             #     'innerText')
-            _category_text: str = WebDriverWait(self.driver, 10).until(
+            _category_text: str = WebDriverWait(self.driver, 3).until(
                 ec.presence_of_element_located((By.CLASS_NAME, 'news-list--category'))).get_attribute("innerText")
             _document.other_data['category'] = _category_text
         except Exception as e:
@@ -178,7 +178,7 @@ class JCB:
             # _title = self.driver.find_element(By.XPATH,
             #                                   '//*[@id="press"]/div[1]/div/div/div[2]/div/div/h1[contains(class, "news_title")]').get_attribute(
             #     'innterText')
-            _title: str = WebDriverWait(self.driver, 10).until(
+            _title: str = WebDriverWait(self.driver, 3).until(
                 ec.presence_of_element_located((By.CLASS_NAME, 'news_title'))).get_attribute("innerText")
             _document.title = _title
         except Exception as e:
@@ -187,14 +187,14 @@ class JCB:
 
         try:  # Аннотация новости
             # _abstract: str = self.driver.find_element(By.XPATH, '//*[@id="press"]/div[1]/div/div/div[2]/div/div/div/p[contains(class, "txtAC")]').get_attribute('innerText')
-            _abstract: str = WebDriverWait(self.driver, 10).until(
+            _abstract: str = WebDriverWait(self.driver, 3).until(
                 ec.presence_of_element_located((By.CLASS_NAME, 'txtAC'))).get_attribute("innerText")
             _document.abstract = _abstract
         except Exception as e:
             self.logger.error(f'Page {self.driver.current_url} do not contain a abstract of news. Throw error: {e}')
 
         try:  # Text новости
-            _text = WebDriverWait(self.driver, 10).until(ec.presence_of_element_located((By.XPATH, '//*[@id="press"]/div[1]/div/div/div[2]/div/div/div'))).get_attribute("innerText")
+            _text = WebDriverWait(self.driver, 3).until(ec.presence_of_element_located((By.XPATH, '//*[@id="press"]/div[1]/div/div/div[2]/div/div/div'))).get_attribute("innerText")
             _document.text = _text
         except Exception as e:
             self.logger.error(f'Page {self.driver.current_url}. Error parse main text of news. Throw error: {e}')
@@ -212,53 +212,3 @@ class JCB:
         :rtype:
         """
         return f"Find document | name: {doc.title} | link to web: {doc.web_link} | publication date: {doc.pub_date}"
-
-    @staticmethod
-    def some_necessary_method():
-        """
-        Если для парсинга нужен какой-то метод, то его нужно писать в классе.
-
-        Например: конвертация дат и времени, конвертация версий документов и т. д.
-        :return:
-        :rtype:
-        """
-        ...
-
-    @staticmethod
-    def nasty_download(driver, path: str, url: str) -> str:
-        """
-        Метод для "противных" источников. Для разных источника он может отличаться.
-        Но основной его задачей является:
-            доведение driver селениума до файла непосредственно.
-
-            Например: пройти куки, ввод форм и т. п.
-
-        Метод скачивает документ по пути, указанному в driver, и возвращает имя файла, который был сохранен
-        :param driver: WebInstallDriver, должен быть с настроенным местом скачивания
-        :_type driver: WebInstallDriver
-        :param url:
-        :_type url:
-        :return:
-        :rtype:
-        """
-
-        with driver:
-            driver.set_page_load_timeout(40)
-            driver.get(url=url)
-            time.sleep(1)
-
-            # ========================================
-            # Тут должен находится блок кода, отвечающий за конкретный источник
-            # -
-            # ---
-            # ========================================
-
-            # Ожидание полной загрузки файла
-            while not os.path.exists(path + '/' + url.split('/')[-1]):
-                time.sleep(1)
-
-            if os.path.isfile(path + '/' + url.split('/')[-1]):
-                # filename
-                return url.split('/')[-1]
-            else:
-                return ""

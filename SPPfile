@@ -56,8 +56,8 @@ ENTRY JCB content
 #       critical - флаг, который указывает, что выбранный модуль должен завершить работу без ошибок для продолжения работы постобработки
 
 # Стандартная связка для парсеров
-ADD TimezoneSafeControl critical
-ADD FilterOnlyNewDocumentWithDB critical
-ADD UploadDocumentToDB critical
+ADD TimezoneSafeControl
+ADD FilterOnlyNewDocumentWithDB
+ADD UploadDocumentToDB
 
 ## ****************************************************
