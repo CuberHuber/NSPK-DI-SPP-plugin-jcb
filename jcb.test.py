@@ -40,7 +40,7 @@ class JCB:
     TEMPLATE_URL = 'https://www.global.jcb/en/press/index.html?year={year}'
     _content_document: list[SPP_document]
 
-    def __init__(self, webdriver: WebDriver, *args, **kwargs):
+    def __init__(self, webdriver: WebDriver, dump, *args, **kwargs):
         """
         Конструктор класса парсера
 
@@ -50,6 +50,7 @@ class JCB:
         # Обнуление списка
         self._content_document = []
         self.driver = webdriver
+        self.dump = dump
 
         # Логер должен подключаться так. Вся настройка лежит на платформе
         self.logger = logging.getLogger(self.__class__.__name__)
@@ -81,10 +82,9 @@ class JCB:
         # Тут должен находится блок кода, отвечающий за парсинг конкретного источника
         # -
         try:
-            with open('backup/documents.backup.pkl', 'wb') as file:
-                docs = pickle.load(file)
-                for doc in docs:
-                    self._content_document.append(doc)
+            docs = pickle.load(self.dump)
+            for doc in docs:
+                self._content_document.append(doc)
         except Exception as e:
             print(e)
 
