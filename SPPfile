@@ -41,7 +41,8 @@ PAYLOAD jcb.test    # *раскомментировать
 # Инструкция INIT устанавливает значения, объекты, который нужно передать в конструктор класса нагрузки при ее инициализации
 #       keyword - название, по которому будет передаваться объект (key)
 #       module - название модуля, который будет загружен
-INIT webdriver WebDriver
+INIT webdriver MODULE WebDriver
+INIT dump FILE backup/documents.backup.pkl
 
 # Инструкция ENTRY устанавоивает точку входа. Это имя класса и метода, которые должна запустить платформа.
 #       {entry method} по умолчанию - content
