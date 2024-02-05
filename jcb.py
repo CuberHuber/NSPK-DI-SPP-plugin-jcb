@@ -5,16 +5,15 @@
 """
 import datetime
 import logging
-import os
 import re
 import time
 
 import dateutil.parser
+from selenium.common import NoSuchElementException
 from selenium.webdriver.chrome.webdriver import WebDriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as ec
-from selenium.webdriver.support.ui import WebDriverWait, Select
-from selenium.common import NoSuchElementException
+from selenium.webdriver.support.ui import WebDriverWait
 
 from src.spp.types import SPP_document
 
@@ -39,7 +38,7 @@ class JCB:
     TEMPLATE_URL = 'https://www.global.jcb/en/press/index.html?year={year}'
     _content_document: list[SPP_document]
 
-    def __init__(self, webdriver: WebDriver, *args, **kwargs):
+    def __init__(self, webdriver: WebDriver, max_count_documents: int = 100, *args, **kwargs):
         """
         Конструктор класса парсера
 
@@ -49,6 +48,7 @@ class JCB:
         # Обнуление списка
         self._content_document = []
         self.driver = webdriver
+        self.max_count_documents = max_count_documents
 
         # Логер должен подключаться так. Вся настройка лежит на платформе
         self.logger = logging.getLogger(self.__class__.__name__)
@@ -80,7 +80,7 @@ class JCB:
         # Тут должен находится блок кода, отвечающий за парсинг конкретного источника
         # -
 
-        self.driver.set_page_load_timeout(40)
+        self.driver.set_page_load_timeout(60)
 
         # Получения списка страниц по годам
         current_years: list[int] = self._years_for_parsing()
@@ -98,21 +98,21 @@ class JCB:
                     'href')  # ссылка на страницу новости
                 news_hrefs.append(news_href)
 
+        count = 0
         for url in news_hrefs:
+            if count >= self.max_count_documents:
+                self.logger.debug(f'Max count documents reached ({self.max_count_documents})')
+                break
             try:
                 document = self._parse_news_page(url)  # парсинг страницы новости
                 self._content_document.append(document)
                 self.logger.info(self._find_document_text_for_logger(document))
+                count += 1
             except Exception as e:
                 # При ошибке парсинга новости, парсер продолжает свою работу
-                self.logger.debug(f'news by link:{news_href} done parse with error')
-
-        # Логирование найденного документа
-        # self.logger.info(self._find_document_text_for_logger(document))
-
+                self.logger.debug(f'news by link:{url} done parse with error {e}')
         # ---
         # ========================================
-        ...
 
     def _years_for_parsing(self) -> list[int]:
         """
