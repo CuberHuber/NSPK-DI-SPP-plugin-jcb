@@ -59,7 +59,9 @@ ENTRY JCB content
 
 # Стандартная связка для парсеров
 ADD TimezoneSafeControl
+ADD CutJunkCharactersFromDocumentText
 ADD FilterOnlyNewDocumentWithDB
+ADD CutJunkCharactersFromDocumentText
 ADD UploadDocumentToDB
 
 ## ****************************************************
