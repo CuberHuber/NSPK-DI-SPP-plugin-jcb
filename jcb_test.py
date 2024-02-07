@@ -3,19 +3,8 @@
 
 1/2 документ плагина
 """
-import datetime
 import logging
-import os
 import pickle
-import re
-import time
-
-import dateutil.parser
-from selenium.webdriver.chrome.webdriver import WebDriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support import expected_conditions as ec
-from selenium.webdriver.support.ui import WebDriverWait, Select
-from selenium.common import NoSuchElementException
 
 from src.spp.types import SPP_document
 
@@ -40,7 +29,7 @@ class JCB:
     TEMPLATE_URL = 'https://www.global.jcb/en/press/index.html?year={year}'
     _content_document: list[SPP_document]
 
-    def __init__(self, webdriver: WebDriver, dump, *args, **kwargs):
+    def __init__(self, dump, *args, **kwargs):
         """
         Конструктор класса парсера
 
@@ -49,7 +38,6 @@ class JCB:
         """
         # Обнуление списка
         self._content_document = []
-        self.driver = webdriver
         self.dump = dump
 
         # Логер должен подключаться так. Вся настройка лежит на платформе

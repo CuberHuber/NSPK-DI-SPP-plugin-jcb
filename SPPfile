@@ -17,7 +17,8 @@ TYPE PARSER
 # Если в плагине есть нагрузка (модель или парсер), то нужно указать и их.
 # TYPE {filename}   # *раскомментировать
 FILE SPPfile
-FILE jcb.py
+FILE jcb_test.py
+FILE backup/documents.backup.pkl
 
 ## ****************************************************
 
@@ -35,12 +36,13 @@ SET restart-interval 20 hours
 
 # Инструкция PAYLOAD указывает имя файла нагрузки.
 # Файл должен иметь расширение .py и содержать класс нагрузки
-PAYLOAD jcb    # *раскомментировать
+PAYLOAD jcb_test    # *раскомментировать
 
 # Инструкция INIT устанавливает значения, объекты, который нужно передать в конструктор класса нагрузки при ее инициализации
 #       keyword - название, по которому будет передаваться объект (key)
 #       module - название модуля, который будет загружен
-INIT webdriver MODULE(WebDriver)
+# INIT webdriver MODULE(WebDriver)
+INIT dump FILE(backup/documents.backup.pkl)
 
 # Инструкция ENTRY устанавоивает точку входа. Это имя класса и метода, которые должна запустить платформа.
 #       {entry method} по умолчанию - content
